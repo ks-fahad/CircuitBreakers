@@ -1,5 +1,0 @@
-torch
-deepspeed
-transformers
-vllm
-nvidia-tensorrt
