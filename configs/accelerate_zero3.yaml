@@ -1,4 +1,4 @@
-compute_environment: COLAB_GPU          # Use GPU, as Colab typically provides GPUs
+compute_environment: LOCAL_MACHINE
 debug: false
 deepspeed_config:
   deepspeed_multinode_launcher: standard
@@ -7,16 +7,16 @@ deepspeed_config:
   zero3_init_flag: true
   zero3_save_16bit_model: true
   zero_stage: 3
-distributed_type: DEEPSPEED             # Still using DeepSpeed, even though it's unlikely to require multiple machines in Colab
+distributed_type: DEEPSPEED
 downcast_bf16: 'no'
-machine_rank: 0                          # Single machine, so machine rank is 0
+machine_rank: 0
 main_training_function: main
-mixed_precision: bf16                    # Using bf16 for mixed precision training, supported on Colab's GPUs (e.g., A100)
-num_machines: 1                          # Only one machine in Colab
-num_processes: 1                         # Typically 1 process in Colab, unless using data parallelism
+mixed_precision: bf16
+num_machines: 1
+num_processes: 8
 rdzv_backend: static
 same_network: true
-tpu_env: []                              # No TPU usage in Colab (unless you're using a specific Colab TPU environment)
+tpu_env: []
 tpu_use_cluster: false
 tpu_use_sudo: false
-use_cpu: false                           # Use GPU, not CPU
+use_cpu: false
