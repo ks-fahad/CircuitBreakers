@@ -34,7 +34,7 @@ accelerate launch --config_file configs/accelerate_zero1.yaml \
     --per_device_eval_batch_size 32 \
     --gradient_accumulation_steps 1 \
     --do_eval \
-    --evaluation_strategy "steps" \
+    --eval_strategy "steps" \
     --eval_steps 1000  \
     --save_total_limit 0 \
     --learning_rate 1e-4 \
