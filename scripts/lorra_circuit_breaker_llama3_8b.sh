@@ -42,7 +42,7 @@ accelerate launch --config_file configs/accelerate_zero1.yaml \
     --lr_scheduler_type "constant" \
     --logging_strategy "steps" \
     --logging_steps 10 \
-    --tf32 True \
+    --tf32 False \
     --model_max_length 8192 \
     --q_lora False \
     --gradient_checkpointing True \
