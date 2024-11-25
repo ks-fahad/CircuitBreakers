@@ -6,6 +6,7 @@ import gc
 import atexit
 import numpy as np
 
+import deepspeed
 from deepspeed import zero
 from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
 from peft import LoraConfig, get_peft_model
