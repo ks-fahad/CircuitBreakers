@@ -6,7 +6,6 @@ import gc
 import atexit
 import numpy as np
 
-import deepspeed
 from deepspeed import zero
 from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
 from peft import LoraConfig, get_peft_model
@@ -223,7 +222,7 @@ def train():
     print(training_args)
 
     device_map = "auto"
-    if len(training_args.fsdp) > 0 or deepspeed.is_deepspeed_zero3_enabled():
+    if len(training_args.fsdp) > 0:
         logging.warning(
             "FSDP and ZeRO3 are both currently incompatible with QLoRA."
         )
