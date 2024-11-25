@@ -355,7 +355,7 @@ def train():
 
     training_args.remove_unused_columns = False
     trainer = CustomTrainer(
-        model=model, tokenizer=tokenizer, args=training_args, train_dataset=train_dataset, data_collator=data_collator
+        model=model, processing_class=tokenizer, args=training_args, train_dataset=train_dataset, data_collator=data_collator
     )
     model.config.use_cache = False
     atexit.register(save_model_function, model=model, trainer=trainer)
