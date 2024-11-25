@@ -34,7 +34,7 @@ accelerate launch --config_file configs/accelerate_zero1.yaml \
     --gradient_accumulation_steps 1 \
     --use_refusal_retain \
     --do_eval \
-    --eval_strategy "steps" \
+    --eval_strategy "no" \
     --eval_steps 1000  \
     --save_total_limit 0 \
     --learning_rate 1e-4 \
