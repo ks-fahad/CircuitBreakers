@@ -1,0 +1,6 @@
+deepspeed
+transformers
+datasets
+accelerate
+peft
+torch
