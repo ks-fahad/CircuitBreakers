@@ -33,6 +33,7 @@ def handle_non_serializable(obj):
 
 def load_model_and_tokenizer(model_name_or_path: str):
     model = AutoModelForCausalLM.from_pretrained(model_name_or_path, device_map="auto")
+    model.to("cuda")
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
     tokenizer.padding_side = "left"
