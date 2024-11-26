@@ -14,6 +14,7 @@ def save_model_and_tokenizer(model_name_or_path, model, tokenizer, drop_layers_a
         anchor_model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype=merged_model.dtype, device_map="auto")
         merged_model.model.layers = merged_model.model.layers + anchor_model.model.layers[drop_layers_after+1:]
         merged_model.config = anchor_model.config
+        anchor_model.to("cuda")
 
     merged_model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
@@ -38,6 +39,7 @@ def save_llava_model_and_tokenizer(model_name_or_path, model, processor, drop_la
     anchor_model = LlavaNextForConditionalGeneration.from_pretrained(model_name_or_path, device_map="auto", torch_dtype=merged_model.dtype)
     merged_model.language_model.model.layers = merged_model.language_model.model.layers + anchor_model.language_model.model.layers[drop_layers_after+1:]
     merged_model.config = anchor_model.config
+    anchor_model.to("cuda")
 
     merged_model.save_pretrained(output_dir)
     processor.save_pretrained(output_dir)
