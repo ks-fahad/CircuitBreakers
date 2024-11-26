@@ -275,7 +275,6 @@ def train():
             device_map=device_map,
     )
     
-    model.to("cuda")
     save_model_function = partial(save_model_function, 
                     model_name_or_path=model_name_or_path, 
                     drop_layers_after=drop_layers_after, 
