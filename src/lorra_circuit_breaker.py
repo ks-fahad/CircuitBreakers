@@ -267,13 +267,19 @@ def train():
     tokenizer.pad_token = tokenizer.eos_token or tokenizer.unk_token
     extra_save_kargs = dict(tokenizer=tokenizer)
     save_model_function = save_model_and_tokenizer
-    
-    model = AutoModelForCausalLM.from_pretrained(
-            model_name_or_path,
-            config=config,
-            cache_dir=training_args.cache_dir,
-            device_map=device_map,
-    )
+
+    try:
+        model = AutoModelForCausalLM.from_pretrained(
+                model_name_or_path,
+                config=config,
+                cache_dir=training_args.cache_dir,
+                device_map=device_map,
+        )
+    except KeyError as e:
+        print(f"KeyError: {e}")
+        print("Available keys in model state_dict:")
+        model_state_dict = AutoModelForCausalLM.from_pretrained("your-model-name").state_dict()
+        print(model_state_dict.keys())
     
     save_model_function = partial(save_model_function, 
                     model_name_or_path=model_name_or_path, 
