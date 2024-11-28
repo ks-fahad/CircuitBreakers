@@ -4,6 +4,7 @@ import torch
 from transformers import LlavaNextForConditionalGeneration, AutoModelForCausalLM
 
 def save_model_and_tokenizer(model_name_or_path, model, tokenizer, drop_layers_after, output_dir, trainer):
+    model.cpu()
     os.makedirs(output_dir, exist_ok=True)
     print(f"\n\nModel and tokenizer saving to {output_dir}\n\n")
     
@@ -28,6 +29,7 @@ def save_model_and_tokenizer(model_name_or_path, model, tokenizer, drop_layers_a
     
 
 def save_llava_model_and_tokenizer(model_name_or_path, model, processor, drop_layers_after, output_dir, trainer):
+    model.cpu()
     os.makedirs(output_dir, exist_ok=True)
     print(f"MModel and processor saving to {output_dir}")
     
