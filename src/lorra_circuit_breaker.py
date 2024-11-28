@@ -268,19 +268,19 @@ def train():
     extra_save_kargs = dict(tokenizer=tokenizer)
     save_model_function = save_model_and_tokenizer
 
-    # model = AutoModelForCausalLM.from_pretrained(
-    #         model_name_or_path,
-    #         config=config,
-    #         cache_dir=training_args.cache_dir,
-    #         device_map=device_map,
-    # )
-    
-    model = AutoModelForSeq2SeqLM.from_pretrained(
+    model = AutoModelForCausalLM.from_pretrained(
             model_name_or_path,
             config=config,
             cache_dir=training_args.cache_dir,
             device_map=device_map,
     )
+    
+    # model = AutoModelForSeq2SeqLM.from_pretrained(
+    #         model_name_or_path,
+    #         config=config,
+    #         cache_dir=training_args.cache_dir,
+    #         device_map=device_map,
+    # )
     
     save_model_function = partial(save_model_function, 
                     model_name_or_path=model_name_or_path, 
