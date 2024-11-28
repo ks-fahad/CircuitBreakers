@@ -30,8 +30,8 @@ accelerate launch --config_file configs/accelerate_zero1.yaml \
     --overwrite_output_dir \
     --max_steps 150 \
     --bf16 True \
-    --per_device_train_batch_size 16 \
-    --per_device_eval_batch_size 32 \
+    --per_device_train_batch_size 8 \
+    --per_device_eval_batch_size 16 \
     --gradient_accumulation_steps 1 \
     --do_eval \
     --eval_strategy "no" \
