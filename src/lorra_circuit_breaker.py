@@ -11,7 +11,7 @@ from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
 from peft import LoraConfig, get_peft_model
 import transformers
 from torch.nn.functional import cosine_similarity
-from transformers import Trainer, AutoTokenizer, AutoModelForCausalLM, AutoConfig
+from transformers import Trainer, AutoTokenizer, AutoModelForCausalLM, AutoConfig, AutoModelForSeq2SeqLM
 import torch
 
 # from cb_train_dataset import (
@@ -268,7 +268,14 @@ def train():
     extra_save_kargs = dict(tokenizer=tokenizer)
     save_model_function = save_model_and_tokenizer
 
-    model = AutoModelForCausalLM.from_pretrained(
+    # model = AutoModelForCausalLM.from_pretrained(
+    #         model_name_or_path,
+    #         config=config,
+    #         cache_dir=training_args.cache_dir,
+    #         device_map=device_map,
+    # )
+    
+    model = AutoModelForSeq2SeqLM.from_pretrained(
             model_name_or_path,
             config=config,
             cache_dir=training_args.cache_dir,
