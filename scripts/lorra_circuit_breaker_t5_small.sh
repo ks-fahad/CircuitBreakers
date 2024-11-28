@@ -4,7 +4,7 @@ export WANDB_MODE=offline
 export MASTER_PORT=$((29000 + RANDOM % 1000))
 export CUBLAS_WORKSPACE_CONFIG=:16:8
 
-### Llama-3-8B Config ###
+### T5 Config ###
 model_name_or_path=google-t5/t5-small
 lorra_alpha=10
 layers="10,20"
