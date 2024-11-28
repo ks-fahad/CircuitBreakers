@@ -7,3 +7,4 @@ torch
 tqdm
 nvidia-pyindex
 nvidia-tensorrt
+bitsandbytes
