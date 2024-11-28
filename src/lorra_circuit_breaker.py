@@ -13,6 +13,7 @@ import transformers
 from torch.nn.functional import cosine_similarity
 from transformers import Trainer, AutoTokenizer, AutoModelForCausalLM, AutoConfig, AutoModelForSeq2SeqLM
 import torch
+from accelerate import init_empty_weights
 
 # from cb_train_dataset import (
 #     CircuitBreakerDataset
@@ -273,6 +274,7 @@ def train():
             config=config,
             cache_dir=training_args.cache_dir,
             device_map=device_map,
+            load_in_8bit=True,
     )
     
     # model = AutoModelForSeq2SeqLM.from_pretrained(
