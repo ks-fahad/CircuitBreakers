@@ -53,7 +53,7 @@ class TrainingArguments(transformers.TrainingArguments):
     optim: str = field(default="adamw_torch")
 
     model_max_length: int = field(
-        default=512,
+        default=256,
         metadata={"help": "Maximum sequence length. Sequences will be right padded (and possibly truncated)."},
     )
     grouped_to_max_length: bool = field (
