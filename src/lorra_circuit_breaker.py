@@ -317,7 +317,7 @@ def train():
         def get_training_progress(self):
             return self.current_training_step / 300
 
-        def compute_loss(self, model, inputs, return_outputs=False):
+        def compute_loss(self, model, inputs, num_items_in_batch=None, return_outputs=False):
             return compute_loss(
                 self, 
                 model, 
