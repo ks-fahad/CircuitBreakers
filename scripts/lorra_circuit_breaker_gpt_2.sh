@@ -4,7 +4,7 @@ export WANDB_MODE=offline
 export MASTER_PORT=$((29000 + RANDOM % 1000))
 export CUBLAS_WORKSPACE_CONFIG=:16:8
 
-### Llama-3-8B Config ###
+### GPT-2 Config ###
 model_name_or_path=openai-community/gpt2
 lorra_alpha=10
 layers="10,20"
