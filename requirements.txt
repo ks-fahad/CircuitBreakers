@@ -4,5 +4,6 @@ datasets
 accelerate
 peft
 torch
+tqdm
 nvidia-pyindex
 nvidia-tensorrt
