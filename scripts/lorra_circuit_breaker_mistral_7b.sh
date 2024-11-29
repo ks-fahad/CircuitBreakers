@@ -37,7 +37,7 @@ accelerate launch --config_file configs/accelerate_zero1.yaml \
     --eval_strategy "no" \
     --eval_steps 1000  \
     --save_total_limit 0 \
-    --learning_rate 1e-4 \
+    --learning_rate 1e-2 \
     --weight_decay 0. \
     --lr_scheduler_type "constant" \
     --logging_strategy "steps" \
