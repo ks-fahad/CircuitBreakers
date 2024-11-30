@@ -19,10 +19,10 @@ def save_model_and_tokenizer(model_name_or_path, model, tokenizer, drop_layers_a
     # merge original layers
     if drop_layers_after is not None:
         anchor_model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype=merged_model.dtype, device_map="auto")
-            merged_model.model.layers = merged_model.model.layers + anchor_model.model.layers[drop_layers_after+1:]
-            merged_model.config = anchor_model.config
-         else:
-            raise ValueError("Incompatible layer structure for model merging.")
+        merged_model.model.layers = merged_model.model.layers + anchor_model.model.layers[drop_layers_after+1:]
+        merged_model.config = anchor_model.config
+    else:
+        raise ValueError("Incompatible layer structure for model merging.")
 
      # Save model and tokenizer
     try:
