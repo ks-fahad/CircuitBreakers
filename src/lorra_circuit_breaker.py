@@ -180,13 +180,37 @@ def get_peft_state_maybe_zero_3(named_params, bias):
     to_return = {k: maybe_zero_3(v) for k, v in to_return.items()}
     return to_return
 
+# def get_model_generation(inputs, model, tokenizer, prefill=""):
+#     inputs = tokenizer.apply_chat_template(inputs, add_generation_prompt=True, tokenize=False) + prefill
+#     encoded_inputs = tokenizer(inputs, return_tensors='pt')
+
+#     with torch.no_grad():
+#         outputs = model.generate(**encoded_inputs.to(model.device), max_new_tokens=256, do_sample=True, temperature=0.7).detach().cpu()
+#         sanity_generation = tokenizer.decode(outputs[0], skip_special_tokens=True).replace(inputs, "")
+#         print(sanity_generation)
+    
+#     print()
 def get_model_generation(inputs, model, tokenizer, prefill=""):
+    # Ensure prefill is appended to the input text properly
     inputs = tokenizer.apply_chat_template(inputs, add_generation_prompt=True, tokenize=False) + prefill
+
+    # Tokenize the inputs and move to correct device (same as model)
     encoded_inputs = tokenizer(inputs, return_tensors='pt')
+    encoded_inputs = {key: value.to(model.device) for key, value in encoded_inputs.items()}
 
     with torch.no_grad():
-        outputs = model.generate(**encoded_inputs.to(model.device), max_new_tokens=256, do_sample=True, temperature=0.7).detach().cpu()
+        # Generate the output, ensuring it's on the same device as the model
+        outputs = model.generate(
+            **encoded_inputs,
+            max_new_tokens=256,
+            do_sample=True,
+            temperature=0.7
+        ).detach().cpu()
+
+        # Decode the generated output and remove the original input from it
         sanity_generation = tokenizer.decode(outputs[0], skip_special_tokens=True).replace(inputs, "")
+
+        # Print the final generated text
         print(sanity_generation)
     
     print()
