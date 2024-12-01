@@ -63,3 +63,12 @@ def save_llava_model_and_tokenizer(model_name_or_path, model, processor, drop_la
 
     if trainer.training_args.do_eval:
         trainer.evaluate()
+
+def get_model_generation(inputs, model, tokenizer):
+    tokenizer.chat_template = {
+        "system": "You are a helpful assistant.",
+        "user": "{input}",
+        "assistant": "{output}"
+    }
+    inputs = tokenizer.apply_chat_template(inputs, add_generation_prompt=True, tokenize=False) + prefill
+    return model.generate(inputs)
