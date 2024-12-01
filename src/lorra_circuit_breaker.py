@@ -35,8 +35,6 @@ from args import (
     LorraArguments,
 )
 
-from huggingface_hub import login
-
 def compute_loss(self, model, inputs, target_layers, alpha, return_outputs=False, tokenizer=None, **kwargs):
 
     self.current_training_step += 1
@@ -411,7 +409,5 @@ if __name__ == "__main__":
     torch.manual_seed(SEED)
     np.random.seed(SEED)
     torch.use_deterministic_algorithms(True)
-
-    login(token="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")
 
     train()
