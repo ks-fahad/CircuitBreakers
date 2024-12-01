@@ -25,7 +25,7 @@ def save_model_and_tokenizer(model_name_or_path, model, tokenizer, drop_layers_a
 
      # Save model and tokenizer
     try:
-        merged_model.save_pretrained(output_dir, max_shard_size="1GB")
+        merged_model.save_pretrained(output_dir, max_shard_size="5GB")
     except Exception as e:
         print(f"Error saving model: {e}")
     tokenizer.save_pretrained(output_dir)
