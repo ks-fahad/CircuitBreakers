@@ -1,7 +1,7 @@
 import os
 import json
 import torch
-from transformers import LlavaNextForConditionalGeneration, AutoModelForCausalLM
+from transformers import GPT2LMHeadModel, GPT2TokenizerFast, AutoModelForCausalLM
 
 def save_model_and_tokenizer(model_name_or_path, model, tokenizer, drop_layers_after, output_dir, trainer):
     os.makedirs(output_dir, exist_ok=True)
@@ -65,10 +65,12 @@ def save_llava_model_and_tokenizer(model_name_or_path, model, processor, drop_la
         trainer.evaluate()
 
 def get_model_generation(inputs, model, tokenizer):
-    tokenizer.chat_template = {
-        "system": "You are a helpful assistant.",
-        "user": "{input}",
-        "assistant": "{output}"
-    }
+    if not hasattr(tokenizer, "chat_template"):
+        tokenizer.chat_template = {
+            "system": "You are a helpful assistant.",
+            "user": "{input}",
+            "assistant": "{output}"
+        }
+    
     inputs = tokenizer.apply_chat_template(inputs, add_generation_prompt=True, tokenize=False) + prefill
     return model.generate(inputs)
