@@ -11,7 +11,7 @@ from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
 from peft import LoraConfig, get_peft_model
 import transformers
 from torch.nn.functional import cosine_similarity
-from transformers import Trainer, AutoTokenizer, AutoModelForCausalLM, AutoConfig, AutoModelForSeq2SeqLM
+from transformers import Trainer, GPT2LMHeadModel, AutoTokenizer, AutoModelForCausalLM, AutoConfig, AutoModelForSeq2SeqLM
 import torch
 from accelerate import init_empty_weights
 
@@ -35,6 +35,7 @@ from args import (
     LorraArguments,
 )
 
+from huggingface_hub import login
 
 def compute_loss(self, model, inputs, target_layers, alpha, return_outputs=False, tokenizer=None, **kwargs):
 
@@ -205,7 +206,7 @@ def get_model_generation(inputs, model, tokenizer, prefill=""):
             max_new_tokens=256,
             do_sample=True,
             temperature=0.7
-        ).detach().cpu()
+        ).detach()
 
         # Decode the generated output and remove the original input from it
         sanity_generation = tokenizer.decode(outputs[0], skip_special_tokens=True).replace(inputs, "")
@@ -292,15 +293,23 @@ def train():
     tokenizer.pad_token = tokenizer.eos_token or tokenizer.unk_token
     extra_save_kargs = dict(tokenizer=tokenizer)
     save_model_function = save_model_and_tokenizer
-
+    
     model = AutoModelForCausalLM.from_pretrained(
             model_name_or_path,
             config=config,
             cache_dir=training_args.cache_dir,
             device_map=device_map,
-            load_in_8bit=True,
+            ignore_mismatched_sizes=True,
     )
-    
+
+    # model = GPT2LMHeadModel.from_pretrained(
+    #         model_name_or_path,
+    #         config=config,
+    #         cache_dir=training_args.cache_dir,
+    #         device_map=device_map,
+    #         ignore_mismatched_sizes=True
+    #         # load_in_8bit=True,
+    # )
     # model = AutoModelForSeq2SeqLM.from_pretrained(
     #         model_name_or_path,
     #         config=config,
@@ -402,5 +411,7 @@ if __name__ == "__main__":
     torch.manual_seed(SEED)
     np.random.seed(SEED)
     torch.use_deterministic_algorithms(True)
+
+    login(token="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")
 
     train()
