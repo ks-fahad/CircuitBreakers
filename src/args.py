@@ -31,7 +31,7 @@ class LoraArguments:
     lora_alpha: int = 16
     lora_dropout: float = 0.05
     lora_target_modules: Union[List[str], str] = field(
-        default_factory=lambda: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+        default_factory=lambda: ["attn.c_attn", "attn.c_proj", "mlp.c_fc", "mlp.c_proj"]
     )
     lora_weight_path: str = ""
     lora_bias: str = "none"
@@ -53,7 +53,7 @@ class TrainingArguments(transformers.TrainingArguments):
     optim: str = field(default="adamw_torch")
 
     model_max_length: int = field(
-        default=256,
+        default=128,
         metadata={"help": "Maximum sequence length. Sequences will be right padded (and possibly truncated)."},
     )
     grouped_to_max_length: bool = field (
