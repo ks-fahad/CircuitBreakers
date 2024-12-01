@@ -9,15 +9,16 @@ from tqdm import tqdm
 import json
 import random
 import csv
+
 random.seed(0)
 
 class CircuitBreakerDataset(Dataset):
     
     def __init__(self, 
                 tokenizer: transformers.PreTrainedTokenizer, 
-                num_examples,
+                num_examples: int,
                 lorra_args,
-                model_name_or_path,
+                model_name_or_path: str,
                 ):
         super(CircuitBreakerDataset, self).__init__()
 
@@ -27,28 +28,43 @@ class CircuitBreakerDataset(Dataset):
         one_shot_template = "{user_tag}{instruction}{assistant_tag}<SEPARATOR>{response}"
 
         # ================ Model and Template Config  ================
-        # Default configs
-        sep_token = ""
+        sep_token = "<|endoftext|>"
         switch_select = [0]
         use_refusal_retain = False
         user_tag, assistant_tag = None, None
+
+        # Handle model-specific templates and configurations
         if 'llama-3' in self.model_name_or_path:
             print("USING LLAMA TEMPLATE")
-            user_tag="<|start_header_id|>user<|end_header_id|>\n\n"
-            assistant_tag="<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+            user_tag = "<|start_header_id|>user<|end_header_id|>\n\n"
+            assistant_tag = "<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
             switch_select = [0, 1]
             use_refusal_retain = True
         elif 'mistral' in self.model_name_or_path:
             print("USING MISTRAL TEMPLATE")
-            # fix spacing issue in template
-            tokenizer.chat_template = "{{ bos_token }}{% for message in messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ ' ' + message['content'] + eos_token}}{% else %}{{ raise_exception('Only user and assistant roles are supported!') }}{% endif %}{% endfor %}"
-            user_tag="[INST] "
-            assistant_tag=" [/INST]"
+            tokenizer.chat_template = (
+                "{{ bos_token }}{% for message in messages %}"
+                "{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}"
+                "{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}"
+                "{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}"
+                "{{ ' ' + message['content'] + eos_token}}{% else %}{{ raise_exception('Only user and assistant roles are supported!') }}{% endif %}"
+                "{% endfor %}"
+            )
+            user_tag = "[INST] "
+            assistant_tag = " [/INST]"
             sep_token = " "
+        elif 'gpt2' in self.model_name_or_path:
+            print("USING GPT2 TEMPLATE")
+            user_tag = ""  # GPT-2 does not require special tags
+            assistant_tag = ""
+            sep_token = " "  # Standard separator for GPT-2 tokenization
         else:
-            raise NotImplementedError(f"Config {self.model_name_or_path} not found")
-        
-        assert user_tag and assistant_tag, "user_tag/assistant_tag not defined"
+            print(f"WARNING: Using default configuration for {self.model_name_or_path}")
+            user_tag = ""
+            assistant_tag = ""
+            sep_token = " "
+
+        assert user_tag is not None and assistant_tag is not None, "user_tag/assistant_tag must be defined"
 
         self.user_tag = user_tag
         self.assistant_tag = assistant_tag
@@ -63,7 +79,7 @@ class CircuitBreakerDataset(Dataset):
 
             switch = np.random.choice(switch_select)
             if switch == 0:
-                formatted_input = tokenizer.apply_chat_template(messages, tokenize=False).replace(tokenizer.bos_token, "")
+                formatted_input = " ".join([msg["content"] for msg in messages]).replace(tokenizer.bos_token, "")
             elif switch == 1:
                 formatted_input = one_shot_template.format(
                     user_tag=user_tag, assistant_tag=assistant_tag,
@@ -71,7 +87,7 @@ class CircuitBreakerDataset(Dataset):
 
             orig_s.append(formatted_input)
 
-            if len(orig_s) > num_examples:
+            if len(orig_s) >= num_examples:
                 break
         self.orig_s_retain = orig_s
         random.shuffle(self.orig_s_retain)
@@ -79,7 +95,6 @@ class CircuitBreakerDataset(Dataset):
         print("Orig s length:", len(self.orig_s_retain))
 
         # ======================= Borderline Retain ======================= #
-        # from https://github.com/paul-rottger/exaggerated-safety
         with open(f'data/xstest_v2_completions_gpt4_gpteval.csv', newline='') as f:
             data = [dict(row) for row in csv.DictReader(f)]
             data = [row for row in data if row['final_label'] == "1_full_compliance"]
