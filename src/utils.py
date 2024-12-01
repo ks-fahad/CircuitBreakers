@@ -71,3 +71,40 @@ def save_llava_model_and_tokenizer(model_name_or_path, model, processor, drop_la
     if trainer.training_args.do_eval:
         trainer.evaluate()
     
+
+
+def save_llava_model_and_tokenizer(model_name_or_path, model, processor, drop_layers_after, output_dir, trainer):
+    os.makedirs(output_dir, exist_ok=True)
+    print(f"Model and processor saving to {output_dir}")
+    
+    # merge lora
+    merged_model = model.merge_and_unload() 
+    
+    # merge original layers (for LlavaNextForConditionalGeneration)
+    anchor_model = LlavaNextForConditionalGeneration.from_pretrained(model_name_or_path, device_map="auto", torch_dtype=merged_model.dtype)
+
+    # Access model layers and merge (this assumes a similar structure to GPT-2 style models)
+    merged_model.language_model.model.layers = merged_model.language_model.model.layers + anchor_model.language_model.model.layers[drop_layers_after + 1:]
+    
+    # Update configuration
+    merged_model.config = anchor_model.config
+
+    # Save model and processor
+    try:
+        merged_model.save_pretrained(output_dir)
+        processor.save_pretrained(output_dir)
+    except Exception as e:
+        print(f"Error saving model: {e}")
+    
+    # Save Lorra configuration
+    lorra_config_path = os.path.join(output_dir, "lorra_config.json")
+    with open(lorra_config_path, "w", encoding="utf-8") as file:
+        json.dump(trainer.lorra_args.to_dict(), file, indent=2)
+    
+    torch.use_deterministic_algorithms(False)
+
+    # Optionally run evaluation
+    if trainer.training_args.do_eval:
+        trainer.evaluate()
+
+    
