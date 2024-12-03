@@ -39,8 +39,8 @@ The introduction of circuit-breaking presents a new strategy for building highly
 ## Results Analysis
 
 <p align="center">
-   <img scr="https://github.com/ks-fahad/CircuitBreakers/blob/main/assets/attacks.png" height="250" /> 
-   <img scr="https://github.com/ks-fahad/CircuitBreakers/blob/main/assets/analysis.png" height="250" />
+   <img src="https://github.com/ks-fahad/CircuitBreakers/blob/main/assets/attacks.png" height="250" alt ="Attacks success rate"/> 
+   <img src="https://github.com/ks-fahad/CircuitBreakers/blob/main/assets/analysis.png" height="250" alt ="Analysis"/>
 </p>
 <!-- ![Analysis](assets/attacks.png) ![Analysis](assets/analysis.png) -->
 
